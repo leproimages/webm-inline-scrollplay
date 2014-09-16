@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="../jquery-scrollplay.js"></script>
+    <style>
+    .filler {
+        height: 300px;
+    }
+    </style>
+    <script>
+        function showWebM(){
+            // converting all links to webm files into html5 video tags
+            $('a').each(function(i, e){
+                var href = $(this).attr('href');
+                if(href.match(/\.webm$/i)){
+                    var tag = '<video controls loop style="max-width: 320px">' + // moar options
+                        '<source type="video/webm" src="' + href + '"></source>' +
+                    '</video>';
+                    $(e).replaceWith(tag);
+                    // or insert new tag before?
+                    //$(tag + '<br />').insertBefore(e);
+                }
+            })
+
+            // adding scroll magic for all videos
+            $('video').scrollplay();
+            // or just for first
+            //$('video').slice(0, 1).scrollplay();
+        }
+
+        $(document).ready(function(){
+            showWebM();
+        })
+    </script>
+</head>
+<body>
+    <a href="http://a.pomf.se/xdeokh.webm">video</a>
+    <div class="filler"></div>
+    <a href="http://idiod.leprosorium.ru">link</a>
+    <div class="filler"></div>
+    <a href="http://a.pomf.se/xdeokh.webm">video</a>
+    <div class="filler"></div>
+    <a href="http://a.pomf.se/xdeokhwebm">incorrect link</a>
+    <div class="filler"></div>
+    <a href="">empty link</a>
+    <div class="filler"></div>
+    <a href="http://example.org/xdeokh.webm">broken video</a>
+    <br />
+    <a href="http://a.pomf.se/xdeokh.webm">video</a>
+    <br />
+    <a href="http://a.pomf.se/xdeokh.webm">video</a>
+    <br />
+    <a href="http://a.pomf.se/xdeokh.webm">video</a>
+</body>
+</html>
