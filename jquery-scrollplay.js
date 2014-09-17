@@ -14,21 +14,21 @@
     videos.each($.proxy(function(i, elem){
       this.add($(elem));
     }, this));
+
+    // We call scrolled here as most likely something into frame already.
+    // TODO: We should do that only for visible videos at viewport and once
+    videos.on('loadedmetadata', $.proxy(function(){
+      this.scrolled();
+    }, this));
   };
 
   // Add the elements positioning data.
   Scroller.prototype.add = function($elem){
-    var t = $elem.offset().top,
-      b = t + $elem.height();
+    var t = $elem.offset().top;
 
     this.data.push({
-      top: t,
-      bottom: b,
       $elem: $elem,
     });
-
-    // We call scrolled here as most likely something into frame already.
-    this.scrolled();
   };
 
   // Called by the on scroll event.
@@ -37,37 +37,38 @@
 
     // Get the scrollTop and scrollBottom.
     var t = $window.scrollTop();
-       var b = t + $window.height();
+    var b = t + $window.innerHeight();
 
     // It possible to have multiple videos inframe, so we only want to play
-    // the first one or the one that has the largest percentage in frame.
+    // the first one or the one that totally in frame (percentage - 100%).
     $.each($.map(this.data, function(obj, i){
-
+      // Height and position of the embed.
+      var h = obj.$elem.innerHeight();
+      var top = obj.$elem.offset().top;
+      var bottom = top + h;
       // We need to find the percentage of the video that's in frame.
       var p = 0;
 
-      // There is overlap of the window and iframe.
-      if (obj.top <= b && obj.bottom >= t) {
-        // Height of the embed.
-        var h = obj.bottom - obj.top;
-
+      // There is overlap of the window and embed.
+      if (top <= b && bottom >= t) {
         // Based on the window, figure out percentages.
-        if (obj.bottom > b){
-          p = (b - obj.top) / h;
-        } else if (obj.top < t){
-          p = (obj.bottom - t) / h;
+        if (bottom > b){
+          p = (b - top) / h;
+        } else if (top < t){
+          p = (bottom - t) / h;
         } else {
           p = 1;
         }
       }
+
       // Stripped down object of what we need.
       return {
         p: p,
-        t: obj.top,
+        t: top,
         node: obj.$elem[0]
       };
     }).sort(function(a, b){
-      // sort based on percentages.
+      // Sort based on percentages.
       if (a.p > b.p){
         return -1;
       } else if (a.p < b.p) {
@@ -83,9 +84,9 @@
       return 0;
     }), function(i, obj){
 
-      // the first obj in the list should be the one we want to play, but
-      // make sure it has at least a little inframe.
-      if (i === 0 && obj.p > 0.25){
+      // The first obj in the list should be the one we want to play, but
+      // make sure it totally inframe.
+      if (i === 0 && obj.p == 1.0){
         obj.node.play();
       } else {
         // pause the rest.

@@ -4,53 +4,85 @@
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="../jquery-scrollplay.js"></script>
     <style>
-    .filler {
+    .a {
         height: 300px;
     }
     </style>
     <script>
-        function showWebM(){
+        function pure_showWebM() {
+            var video_links = document.querySelectorAll('a');
+
+            for (var i = 0; i < video_links.length; i++) {
+                var url = video_links[i].href;
+                if (video_links[i].href.match(/\.webm$/i)) {
+                    var video = document.createElement('video');
+                    video.loop = true;
+                    video.controls = true;
+                    video.style.maxWidth = '350px';
+                    video.preload = 'metadata';
+                    video.innerHTML = 'video tag is not supported';
+                    //video.poster = 'http://path/to/fuck-up/image.jpeg';
+
+                    var source = document.createElement('source');
+                    source.src = url;
+                    source.type = 'video/webm';
+                    video.appendChild(source);
+
+                    video_links[i].parentNode.replaceChild(video, video_links[i]);
+                }
+            }
+            $('video').scrollplay();
+        };
+
+        function jquery_showWebM(){
             // converting all links to webm files into html5 video tags
             $('a').each(function(i, e){
                 var href = $(this).attr('href');
                 if(href.match(/\.webm$/i)){
-                    var tag = '<video controls loop style="max-width: 320px">' + // moar options
+                    var tag = '<video controls loop preload="metadata" style="max-width: 350px">' + // moar options
                         '<source type="video/webm" src="' + href + '"></source>' +
+                        'video tag is not supported' +
                     '</video>';
                     $(e).replaceWith(tag);
-                    // or insert new tag before?
-                    //$(tag + '<br />').insertBefore(e);
                 }
             })
 
             // adding scroll magic for all videos
             $('video').scrollplay();
-            // or just for first
-            //$('video').slice(0, 1).scrollplay();
         }
 
         $(document).ready(function(){
-            showWebM();
+            pure_showWebM();
         })
     </script>
 </head>
 <body>
-    <a href="http://a.pomf.se/xdeokh.webm">video</a>
-    <div class="filler"></div>
-    <a href="http://idiod.leprosorium.ru">link</a>
-    <div class="filler"></div>
-    <a href="http://a.pomf.se/xdeokh.webm">video</a>
-    <div class="filler"></div>
-    <a href="http://a.pomf.se/xdeokhwebm">incorrect link</a>
-    <div class="filler"></div>
-    <a href="">empty link</a>
-    <div class="filler"></div>
-    <a href="http://example.org/xdeokh.webm">broken video</a>
+    <div class="a"></div>
+    <a href="http://a.pomf.se/xdeokh.webm">webm video</a><br>
+    <a href="http://a.pomf.se/xdeokh.webm">webm video</a><br>
+    <a href="http://a.pomf.se/xdeokh.webm">webm video</a><br>
+    <div class="a"></div>
+    <a href="http://a.pomf.se/xdeokh.webm">webm video</a>
+    <div class="a"></div>
+    <div class="a"></div>
+    <!-- div class="a"></div>
+    <video class="video" width="350" controls loop>
+        <source src="http://a.pomf.se/xdeokh.webm">
+    </video>
     <br />
-    <a href="http://a.pomf.se/xdeokh.webm">video</a>
+    <video class="video" width="350" controls loop>
+        <source src="http://a.pomf.se/xdeokh.webm">
+    </video>
     <br />
-    <a href="http://a.pomf.se/xdeokh.webm">video</a>
+    <video class="video" width="350" controls loop>
+        <source src="http://a.pomf.se/xdeokh.webm">
+    </video>
     <br />
-    <a href="http://a.pomf.se/xdeokh.webm">video</a>
+    <div class="a"></div>
+    <video class="video" width="350" controls loop>
+        <source src="http://a.pomf.se/xdeokh.webm">
+    </video>
+    <div class="a"></div>
+    <div class="a"></div -->
 </body>
 </html>
